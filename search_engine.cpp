@@ -19,23 +19,12 @@ public:
     int loc = 0;
     for (const auto &token : tokens) {
       freq_loc[token][index_name].push_back(loc);
-      inverted_index_[token].push_back(index_name);
       loc++;
     }
   }
 
-  vector<string> matchQuery(const string &query) {
+  void matchQuery(const string &query) {
     vector<string> tokens = tokenize(query);
-    map<string, int> freq;
-    set<string> matching_indices;
-    for (const auto &token : tokens) {
-      if (inverted_index_.find(token) != inverted_index_.end()) {
-        for (const auto &index : inverted_index_[token]) {
-          matching_indices.insert(index);
-          freq[index]++;
-        }
-      }
-    }
 
     for (const auto &token : tokens) {
       if (freq_loc.find(token) != freq_loc.end()) { // token is present
@@ -51,13 +40,10 @@ public:
         cout << endl;
       }
     }
-
-    return vector<string>(matching_indices.begin(), matching_indices.end());
   }
 
 private:
   map<string, map<string, vector<int>>> freq_loc;
-  unordered_map<string, vector<string>> inverted_index_;
 
   vector<string> tokenize(const string &text) {
     vector<string> tokens;
@@ -100,11 +86,7 @@ int main() {
       cout << "Enter search query: ";
       cin.ignore();
       getline(cin, query);
-      vector<string> match_results = search_engine.matchQuery(query);
-      cout << "Match results:" << endl;
-      for (const auto &index : match_results) {
-        cout << index << endl;
-      }
+      search_engine.matchQuery(query);
     } else {
       cout << "Unknown command. Please enter 'index', 'search', or 'quit'."
            << endl;
